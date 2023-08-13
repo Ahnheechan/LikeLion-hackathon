@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
+@NoArgsConstructor
 public class AllQuesResDto {
 
     private Long questionId;
@@ -18,6 +19,7 @@ public class AllQuesResDto {
     private String createdBy;
     private String checkStatus;
     private int point;
+    private int answerCnt;
     private LocalDateTime createdAt;
 
 
@@ -30,5 +32,6 @@ public class AllQuesResDto {
         this.point = question.getPoint();
         this.createdAt = question.getCreatedAt();
         this.checkStatus=question.getQuestionCheck().getDescription();
+        this.answerCnt=question.getAnswers().size();
     }
 }

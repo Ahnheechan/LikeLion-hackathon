@@ -5,6 +5,7 @@ import com.power.likelion.common.response.SignStatus;
 import com.power.likelion.dto.login.GetInfoRes;
 import com.power.likelion.dto.login.LoginDto;
 import com.power.likelion.dto.login.LoginResDto;
+import com.power.likelion.dto.member.MemberUpdateReq;
 import com.power.likelion.dto.sign_up.SignUpReqDto;
 import com.power.likelion.dto.sign_up.SingUpResDto;
 import com.power.likelion.service.MemberService;
@@ -12,9 +13,11 @@ import com.power.likelion.utils.swagger.getinfo.GetInfoApiRequest;
 import com.power.likelion.utils.swagger.getinfo.GetInfoApiResponse;
 import com.power.likelion.utils.swagger.login.LoginApiRequest;
 import com.power.likelion.utils.swagger.login.LoginApiResponse;
+import com.power.likelion.utils.swagger.member.MemberUpdateApiReq;
 import com.power.likelion.utils.swagger.sign_up.SignUpApiRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +36,7 @@ public class MemberController {
     @PostMapping("/sign-up")
     public ResponseEntity<SingUpResDto> createMember(@RequestBody SignUpReqDto signUpReqDto){
         try{
+
             memberService.createMember(signUpReqDto);
         }
         catch(IllegalAccessException e){
@@ -87,7 +91,11 @@ public class MemberController {
         }
 
 
+
     }
+
+    /** 내 정보 조회  */
+
     @GetInfoApiRequest
     @GetInfoApiResponse
     @GetMapping("/get-info")
@@ -96,6 +104,25 @@ public class MemberController {
     }
 
 
+    /** 내 정보 수정  */
+    @MemberUpdateApiReq
+    @GetInfoApiResponse
+    @PostMapping("/update/info")
+    public ResponseEntity<?> updateUser(@RequestBody MemberUpdateReq memberUpdateReq){
+        try{
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(BaseResponse.builder()
+                        .result(memberService.updateUser(memberUpdateReq))
+                        .build());
+        }
+        catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
+        }
+    }
+
+
+    /** 관리자 계정 생성 */
     @PostMapping("/admin/sign-up")
     public ResponseEntity<?> createAdmin(@RequestBody SignUpReqDto signUpReqDto){
         try{

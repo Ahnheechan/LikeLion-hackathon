@@ -95,6 +95,7 @@ public class OAuth2Service {
 
 
 
+
     private ProfileDto extractProfile(ResponseEntity<String> response, String provider) throws Exception {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.registerModule(new JavaTimeModule());
@@ -104,9 +105,11 @@ public class OAuth2Service {
             KakaoProfile kakaoProfile = objectMapper.readValue(response.getBody(), KakaoProfile.class);
 
             return new ProfileDto(kakaoProfile.getId(),kakaoProfile.getKakao_account().getEmail());
+
         } else if(provider.equals("google")) {
             GoogleProfile googleProfile = objectMapper.readValue(response.getBody(), GoogleProfile.class);
             return new ProfileDto(googleProfile.getSub(),googleProfile.getEmail());
+
         } else {
             NaverProfile naverProfile = objectMapper.readValue(response.getBody(), NaverProfile.class);
             return new ProfileDto(naverProfile.getResponse().getId(),naverProfile.getResponse().getEmail());
@@ -132,11 +135,22 @@ public class OAuth2Service {
 
         }
         catch(Exception e){
+            String nickname;
+            if(memberRepository.findTopByOrderByIdDesc().isEmpty()){
+                nickname="1";
+            }
+            else{
+                Long id=memberRepository.findTopByOrderByIdDesc().get().getId()+1;
+                nickname=id+"";
+            }
+
+            memberRepository.findTopByOrderByIdDesc().get().getId().toString();
             Member member = Member.builder()
-                    .nickname(provider+System.nanoTime())
+                    .nickname(provider+nickname)
                     .email(profileDto.getEmail())
                     .age(0)
                     .socialId(profileDto.getId())
+                    .point(100)
                     .build();
             member.setRoles(Collections.singletonList(Authority.builder().name("ROLE_USER").build()));
 

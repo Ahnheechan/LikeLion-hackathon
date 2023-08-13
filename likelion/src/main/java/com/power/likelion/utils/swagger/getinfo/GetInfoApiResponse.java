@@ -13,12 +13,20 @@ import java.lang.annotation.RetentionPolicy;
 
 @Retention(RetentionPolicy.RUNTIME)
 @ApiResponses(value = {
-        @ApiResponse(responseCode = "200", description = "내 정보 조회에 성공한 예시입니다.",
+        @ApiResponse(responseCode = "200", description = "요청된 정보입니다.",
                 content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE,
                         examples = {
                                 @ExampleObject(name = "성공 예제",
-                                        value = "{\"status\": \"OK\", \"message\": \"요청된 정보입니다.\",\"email\": \"email@email.com\",\"name\": \"김무한\", \"age\": \"30\"}",
-                                        summary = "내 정보 조회 성공 예제", description = "내 정보 조회에 성공하였습니다.")
+                                        value = "{\n" +
+                                                "    \"status\": \"OK\",\n" +
+                                                "    \"message\": \"요청된 정보입니다.\",\n" +
+                                                "    \"email\": \"ahc700325@gmail.com\",\n" +
+                                                "    \"nickname\": \"김땡땡\",\n" +
+                                                "    \"age\": 24,\n" +
+                                                "    \"point\": 100,\n" +
+                                                "    \"url\": \"https://ncp-bucket-user.kr.object.ncloudstorage.com/profile/1299307499671500.jpg\"\n" +
+                                                "}",
+                                        summary = "API 성공 예제", description = "요청된 정보의 예제입니다.")
                         }))
 })
 public @interface GetInfoApiResponse {

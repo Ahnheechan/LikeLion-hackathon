@@ -1,8 +1,8 @@
 package com.power.likelion.utils.s3;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.*;
 import com.power.likelion.dto.ai_info.ImageResDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +25,29 @@ public class S3Uploader {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
+    /** 이미지 업로드시 글 작성을 그만 두면 해당 이미지들을 bucket에서 삭제해야한다.
+     *  따라서 이걸 구현하려면 아직 글작성을 하지 않았지만 이미지를 업로드 하려고 한 사람들의 이미지들은
+     *  temp 파일에 두었다가 글작성이 완료되면서 글작성에 사용된 temp 파일의 이미지들을 다른 디렉토리에 옮겨주고
+     *  temp에서 사용하지 않은 사진들은 모두 삭제되게 해야한다.
+     *
+     *  하지만 현재는 그냥 글작성 중단시 이미지가 남아있게 되는 문제가 발생하므로 이 부분을 나중에 수정해야 될 거 같다.
+     *  */
 
-    // MultipartFile을 전달받아 File로 전환한 후 S3에 업로드
+    public void delete(String fileName,String dirName){
+        try {
+            String name=fileName.replace("https://ncp-bucket-user.kr.object.ncloudstorage.com/"+dirName+"/","");
+            log.info("name: {}" ,name);
+            amazonS3Client.deleteObject(new DeleteObjectRequest(bucket+"/"+dirName,name));
+
+        } catch (AmazonS3Exception e) {
+            e.printStackTrace();
+        } catch(SdkClientException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /** MultipartFile을 전달받아 File로 전환한 후 S3에 업로드  */
     public ImageResDto upload(MultipartFile multipartFile, String dirName) throws IOException,Exception {
 
         File uploadFile = convert(multipartFile)

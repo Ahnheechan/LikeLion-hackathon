@@ -57,7 +57,6 @@ public class SecurityConfig {
                 .antMatchers("/login", "/sign-up","/admin/sign-up").permitAll()   // permitAll()을 하게되면 JWT 필터를 거치지 않고 간다.
                 //질문 하나를 보는건 비회원도 접근가능 but 질문 생성, 삭제, 답변작성 등은 회원만 가능
                 .antMatchers(HttpMethod.GET,"/questions","/questions/{id}").permitAll()
-
                 .antMatchers(HttpMethod.GET,"/boards","/boards/{id}").permitAll()
 
                 .antMatchers("/questions/create").hasRole("USER")
@@ -66,7 +65,17 @@ public class SecurityConfig {
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용
                 .antMatchers("/user/**").hasRole("USER")
 
+                //로컬에서 소셜 로그인 테스트 용
                 .antMatchers("/login/oauth2/**").permitAll()
+                .antMatchers("/oauth2/**","/social/**").permitAll()
+
+                // AI 소개 게시판 조회
+                .antMatchers("/ai-info","/ai-info/**").permitAll()
+                //이미지 업로드는 모두 허용
+                .antMatchers("/upload/**").permitAll()
+
+                // 카카오 페이
+                .antMatchers("/payment/**").permitAll()
 
                 .anyRequest().authenticated(); // 위에서 설정한 API를 제외하고는 모두 JWT 필터를 거친다는 소리 TODO 나중에 바꿔야 함
 

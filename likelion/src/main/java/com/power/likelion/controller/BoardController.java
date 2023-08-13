@@ -11,6 +11,7 @@ import com.power.likelion.utils.swagger.board.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,11 +34,13 @@ public class BoardController {
     public ResponseEntity<?> createBoard(@RequestBody BoardReqDto boardReqDto, @RequestParam(name = "boardType") String boardType) {
         try{
             BoardResDto boardResDto =boardService.createBoard(boardReqDto,boardType);
+
             return ResponseEntity.status(HttpStatus.OK)
                     .body(BaseResponse.builder()
                             .result(boardResDto)
                             .build());
         }
+
         catch(Exception e){ // 유저가 존재하지 않을 경우
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));

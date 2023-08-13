@@ -6,10 +6,15 @@ import com.power.likelion.domain.member.Member;
 import com.power.likelion.dto.login.GetInfoRes;
 import com.power.likelion.dto.login.LoginDto;
 import com.power.likelion.dto.login.LoginResDto;
+import com.power.likelion.dto.member.MemberUpdateReq;
 import com.power.likelion.dto.sign_up.SignUpReqDto;
 import com.power.likelion.repository.MemberRepository;
 import com.power.likelion.utils.jwts.JwtProvider;
+import com.power.likelion.utils.s3.S3Uploader;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +28,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder encoder;
     private final JwtProvider jwtProvider;
+    private final S3Uploader s3Uploader;
 
     @Transactional
     public void createMember(SignUpReqDto signUpReqDto) throws IllegalAccessException{
@@ -33,12 +39,14 @@ public class MemberService {
             throw new IllegalAccessException("이미 존재하는 이메일 입니다.");
         }
 
+
         Member member = Member.builder()
                 .email(signUpReqDto.getEmail())
                 .password(encoder.encode(signUpReqDto.getPassword()))
                 .nickname(signUpReqDto.getNickname())
                 .age(signUpReqDto.getAge())
                 .point(100)
+                .url(signUpReqDto.getUrl())
                 .build();
 
         member.setRoles(Collections.singletonList(Authority.builder().name("ROLE_USER").build()));
@@ -72,6 +80,7 @@ public class MemberService {
                 .build();
     }
 
+    /** 내정보 조회 */
     public GetInfoRes getMember(String email) throws Exception {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new Exception("계정을 찾을 수 없습니다."));
@@ -82,7 +91,35 @@ public class MemberService {
                 .email(member.getEmail())
                 .age(member.getAge())
                 .point(member.getPoint())
+                .url(member.getUrl())
                 .build();
+    }
+
+    @Transactional
+    public GetInfoRes updateUser(MemberUpdateReq memberUpdateReq)throws Exception{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName(); /** 이메일이 들어감 */
+
+        Member member=memberRepository.findByEmail(name)
+                .orElseThrow(()-> new Exception("유저가 존재하지 않습니다."));
+
+        member.updateMember(memberUpdateReq);
+
+        if(!member.getUrl().equals(memberUpdateReq.getUrl())){
+            s3Uploader.delete(member.getUrl(),"profile");
+            member.setUrl(memberUpdateReq.getUrl());
+        }
+
+        return GetInfoRes.builder()
+                .message("요청된 정보입니다.")
+                .status(SignStatus.OK)
+                .nickname(member.getNickname())
+                .email(member.getEmail())
+                .age(member.getAge())
+                .point(member.getPoint())
+                .url(member.getUrl())
+                .build();
+
     }
 
     @Transactional
@@ -94,11 +131,14 @@ public class MemberService {
             throw new IllegalAccessException("이미 존재하는 admin 입니다.");
         }
 
+
+
         Member member = Member.builder()
                 .email(signUpReqDto.getEmail())
                 .password(encoder.encode(signUpReqDto.getPassword()))
                 .nickname(signUpReqDto.getNickname())
                 .age(signUpReqDto.getAge())
+                .point(1000000)
                 .build();
         member.setRoles(Collections.singletonList(Authority.builder().name("ROLE_ADMIN").build()));
 

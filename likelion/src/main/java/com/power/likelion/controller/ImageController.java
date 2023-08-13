@@ -29,9 +29,28 @@ public class ImageController {
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<?> uploadImage(@RequestParam(value = "image",required = false) MultipartFile files){
+    public ResponseEntity<?> uploadAiInfoImage(
+            @RequestParam(value = "image",required = true) MultipartFile files,
+            @RequestParam(value="directoryName",required = true)String option){
         try {
-            ImageResDto imageResDto=s3Uploader.upload(files,"aiinfo");
+            String dirName="";
+            // AiInfo 게시글 이미지 모음
+            if(option.equals("aiinfo")) {
+                dirName="aiinfo";
+            }
+            // 프로필 이미지 모음
+            else if(option.equals("profile")){
+                dirName="profile";
+            }
+            else{
+                dirName="null";
+            }
+            if(dirName=="null"){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new BaseResponse<>(HttpStatus.BAD_REQUEST.value(),"요청 가능한 directoryName이 아닙니다."));
+            }
+
+            ImageResDto imageResDto = s3Uploader.upload(files, dirName);
 
             return ResponseEntity.status(HttpStatus.OK)
                     .body(BaseResponse.builder()

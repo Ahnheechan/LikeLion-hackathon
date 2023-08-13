@@ -13,8 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import javax.validation.constraints.Min;
 import java.util.NoSuchElementException;
 
@@ -49,9 +48,6 @@ public class QuestionController {
 
     //TODO:  수정해야됨
 
-    /** 프론트에서 받아와야할 데이터 = 현재 페이지번호(page),  화면 하단에 출력할 페이지의 크기(pageSize)
-     *  검색 키워드(searchKeywrod), 검색 유형(SearchType)
-     * */
 
     /** 난 프론트에서 현재 페이지 번호와 한페이지당 size만 받아오면 현재 페이지의 size만큼의 게시글을 보여주고 총 데이터, 페이지 개수를 프론트에게 넘
      * 길 예정 */
@@ -90,15 +86,13 @@ public class QuestionController {
     /** 글 하나 상세조회에서 조회수 증가 로직을 구현해야함  */
     @GetQuesApiRequest
     @GetMapping("/{id}")
-    public ResponseEntity<?> getQuestion(@PathVariable("id") Long id,
-                                         HttpServletRequest request,
-                                         HttpServletResponse response
+    public ResponseEntity<?> getQuestion(@PathVariable("id") Long id
                                          ) throws Exception{
         try{
             return ResponseEntity
                     .status(HttpStatus.OK)
                     .body(BaseResponse.builder()
-                            .result(questionService.getQuestion(id,request,response))
+                            .result(questionService.getQuestion(id))
                             .build());
         }
         catch(Exception e){

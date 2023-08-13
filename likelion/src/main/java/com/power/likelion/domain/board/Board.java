@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@Builder
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -47,6 +47,14 @@ public class Board extends AuditingFiled {
 
     @OneToMany(mappedBy = "board")
     private List<Comment> comments=new ArrayList<Comment>();
+
+    @Builder
+    public Board(String title, String content, String boardType, Member member) {
+        this.title = title;
+        this.content = content;
+        this.boardType = boardType;
+        this.member = member;
+    }
 
     public void update(BoardUpdateDto boardUpdateDto,String boardType){
         this.title=boardUpdateDto.getTitle();

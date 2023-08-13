@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@Builder
 @NoArgsConstructor
 public class LoginResDto {
     private SignStatus status;
@@ -19,6 +18,7 @@ public class LoginResDto {
     private int point;
 
 
+    @Builder
     public LoginResDto(SignStatus status, String message, String nickname, String email,int age, String jwtToken,int point) {
         this.status = status;
         this.message = message;

@@ -11,7 +11,7 @@ import com.power.likelion.dto.board.BoardUpdateDto;
 import com.power.likelion.dto.question.*;
 import com.power.likelion.repository.BoardRepository;
 import com.power.likelion.repository.MemberRepository;
-import lombok.AllArgsConstructor;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -20,7 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -34,13 +34,17 @@ public class BoardService {
     private final MemberRepository memberRepository;
     private final BoardRepository boardRepository;
     private final CommentService commentService;
+
     @Transactional
     public BoardResDto createBoard(BoardReqDto boardReqDto,String boardType)throws Exception{
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String name = authentication.getName();
 
+
         Member member=memberRepository.findByEmail(name)
                 .orElseThrow(()->new Exception("유저가 존재하지 않습니다."));
+
+
 
         Board board=Board.builder()
                 .title(boardReqDto.getTitle())
@@ -50,12 +54,17 @@ public class BoardService {
                 .build();
 
 
-        Board resBoard =boardRepository.save(board);
+        Board result=boardRepository.save(board);
 
+        /** 여기까지 문제 없음 */
 
-        return BoardResDto.builder()
-                .board(resBoard)
+        BoardResDto boardResDto=BoardResDto.builder()
+                .board(result)
                 .build();
+
+        log.info("boardResDto{}",boardResDto.getBoardId());
+
+        return boardResDto;
 
     }
 
@@ -147,7 +156,7 @@ public class BoardService {
 
 
     /** 게시글 하나를 읽어갈때 댓글과 함께 읽어감 */
-    @Transactional(readOnly = true)
+    @Transactional
     public BoardResDto getBoard(Long id)throws Exception {
 
 

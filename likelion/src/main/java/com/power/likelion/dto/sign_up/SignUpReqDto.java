@@ -17,6 +17,9 @@ public class SignUpReqDto {
     @Schema(description = "나이", example = "30")
     private int age;
 
+    @Schema(description = "이미지",example="https://ncp-bucket-user.kr.object.ncloudstorage.com/aiinfo/921193333073900.jpg")
+    private String url;
+
     public SignUpReqDto(String email, String password, String nickname, int age) {
         this.email = email;
         this.password = password;

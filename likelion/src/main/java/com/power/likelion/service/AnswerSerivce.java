@@ -82,8 +82,18 @@ public class AnswerSerivce {
 
     @Transactional
     public void deleteAns(Long id)throws Exception{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
+
         Answer answer = answerRepository.findById(id)
-                .orElseThrow(()-> new Exception("댓글이 존재하지 않습니다."));
+                .orElseThrow(()-> new Exception("답변이 존재하지 않습니다."));
+
+        if(!name.equals(answer.getMember().getEmail())){
+            throw new Exception("답변 작성자가 아닙니다.");
+        }
+
+
         answerRepository.delete(answer);
     }
 

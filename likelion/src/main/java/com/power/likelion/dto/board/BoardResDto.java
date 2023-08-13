@@ -1,13 +1,16 @@
 package com.power.likelion.dto.board;
 
 import com.power.likelion.domain.board.Board;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
+@NoArgsConstructor
 public class BoardResDto {
     private Long boardId;
     private String title;
@@ -18,6 +21,7 @@ public class BoardResDto {
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
     private List<CommentResDto> comments;
+    private int commentCnt;
 
     @Builder
     public BoardResDto(Board board) {
@@ -29,7 +33,10 @@ public class BoardResDto {
         this.viewCount = board.getViewCount();
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
+        this.commentCnt=board.getComments().size();
     }
+
+
     public void setComments(List<CommentResDto> comments){
         this.comments=comments;
     }

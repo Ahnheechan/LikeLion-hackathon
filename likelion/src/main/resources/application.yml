@@ -2,7 +2,7 @@ spring:
 
   # OAuth2
   profiles:
-    include: oauth
+    include: oauth, pay
 
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver

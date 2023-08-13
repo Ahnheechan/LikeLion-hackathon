@@ -31,7 +31,7 @@ public class OAuthRequestFactory {
             map.add("grant_type", "authorization_code");
             map.add("client_id", googleReq.getGoogleClientId());
             map.add("client_secret", googleReq.getGoogleClientSecret());
-            map.add("redirect_uri", "http://localhost:3000/social/login/google");
+            map.add("redirect_uri", "http://localhost:3000/login/oauth2/callback/google");
             map.add("code", code);
 
             return new OAuth2Request("https://oauth2.googleapis.com/token",map);
@@ -43,8 +43,8 @@ public class OAuthRequestFactory {
             map.add("client_id", naverReq.getNaverClientId());
             map.add("client_secret", naverReq.getNaverClientSecret());
             map.add("redirect_uri", naverReq.getNaverRedirect());
-            map.add("state", "project");
             map.add("code", code);
+            map.add("state", "project");
 
             return new OAuth2Request("https://nid.naver.com/oauth2.0/token", map);
         }

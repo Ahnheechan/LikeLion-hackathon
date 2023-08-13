@@ -16,12 +16,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -71,7 +65,7 @@ public class QuestionService {
 
     }
 
-    /** 페이징 처리로 10개의 게시글이 간다. */
+    /** 페이징 처리로 size개의 게시글이 간다. */
     @Transactional
     public QuesPageResDto getQuestions(int page,int size){
         Page<Question> questions = questionRepository.findAll(PageRequest.of(page, size));
@@ -137,11 +131,13 @@ public class QuestionService {
 
     /** 게시글 하나를 읽어갈때 댓글과 함께 읽어감 */
     @Transactional
-    public QuesResDto getQuestion(Long id, HttpServletRequest request, HttpServletResponse response)throws Exception {
+    public QuesResDto getQuestion(Long id)throws Exception {
 
         Question question=questionRepository.findById(id).orElseThrow(() -> new Exception("질문이 존재하지 않습니다."));
 
         question.updateView();
+
+
 
         QuesResDto quesResDto = QuesResDto.builder()
                 .question(question)

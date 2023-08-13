@@ -74,12 +74,13 @@ public class OAuth2Controller {
     @GetMapping("/login/oauth2/callback/naver")
     public ResponseEntity<?> naverLogin(@RequestParam("code") String code) {
 
-        String kakaoAccessToken = oAuth2Service.getAccessToken(code,"naver").getAccess_token();
+
+        String naverAccessToken = oAuth2Service.getAccessToken(code,"naver").getAccess_token();
 
 
         try {
 
-            ProfileDto profileDto = oAuth2Service.getProfile(kakaoAccessToken, "naver");
+            ProfileDto profileDto = oAuth2Service.getProfile(naverAccessToken, "naver");
 
 
             LoginResDto loginResDto=oAuth2Service.findUser(profileDto,"naver");

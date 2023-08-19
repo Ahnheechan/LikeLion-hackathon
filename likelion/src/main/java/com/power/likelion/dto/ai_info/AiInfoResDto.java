@@ -1,16 +1,17 @@
 package com.power.likelion.dto.ai_info;
 
 import com.power.likelion.domain.ai_info.AiInfo;
-import com.power.likelion.domain.image.Image;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
+@ToString
 public class AiInfoResDto {
     private Long id;
     private String title;
@@ -19,7 +20,7 @@ public class AiInfoResDto {
     private int viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
-    private List<String> imageList;
+    private String url;
 
     @Builder
     public AiInfoResDto(AiInfo aiInfo) {
@@ -30,9 +31,7 @@ public class AiInfoResDto {
         this.modifiedAt=aiInfo.getModifiedAt();
         this.createdBy = aiInfo.getMember().getNickname();
         this.viewCount=aiInfo.getViewCount();
+        this.url=aiInfo.getImage();
     }
 
-    public void setImageList(List<String> imageList){
-        this.imageList=imageList;
-    }
 }

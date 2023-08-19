@@ -125,12 +125,14 @@ public class OAuth2Service {
 
             return LoginResDto.builder()
                     .message("로그인 성공")
+                    .id(member.getId())
                     .status(SignStatus.OK)
                     .nickname(member.getNickname())
                     .email(member.getEmail())
                     .age(member.getAge())
                     .jwtToken(jwtProvider.createToken(member.getEmail(), member.getRoles()))
                     .point(member.getPoint())
+                    .url(member.getUrl())
                     .build();
 
         }
@@ -159,11 +161,13 @@ public class OAuth2Service {
             return LoginResDto.builder()
                     .message("첫 소셜 로그인 입니다. 닉네임이 임의로 설정되어있으므로 수정 바랍니다. 나이 초기 설정 값은 NULL 입니다.")
                     .status(SignStatus.OK)
+                    .id(member.getId())
                     .nickname(member.getNickname())
                     .email(member.getEmail())
                     .age(member.getAge())
                     .jwtToken(jwtProvider.createToken(member.getEmail(), member.getRoles()))
                     .point(member.getPoint())
+                    .url(member.getUrl())
                     .build();
         }
 

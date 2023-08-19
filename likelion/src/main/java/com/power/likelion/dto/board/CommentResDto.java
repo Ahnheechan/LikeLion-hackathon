@@ -13,6 +13,7 @@ public class CommentResDto {
     private String createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private Long memberId;
 
     @Builder
     public CommentResDto(Comment comment) {
@@ -21,6 +22,7 @@ public class CommentResDto {
         this.createdBy = comment.getMember().getNickname();
         this.createdAt = comment.getCreatedAt();
         this.modifiedAt = comment.getModifiedAt();
+        this.memberId=comment.getMember().getId();
     }
 
 

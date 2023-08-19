@@ -1,7 +1,7 @@
 package com.power.likelion.domain.ai_info;
 
 import com.power.likelion.common.entity.AuditingFiled;
-import com.power.likelion.domain.image.Image;
+
 import com.power.likelion.domain.member.Member;
 import com.power.likelion.dto.ai_info.AiInfoReqDto;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -36,26 +34,25 @@ public class AiInfo extends AuditingFiled {
     @Column(nullable = false,columnDefinition = "integer default 0")
     private int viewCount;
 
-    @OneToMany(mappedBy="aiInfo")
-    private List<Image> image = new ArrayList<Image>();
+    @Column(nullable = true)
+    private String image ;
 
     @Builder
-    public AiInfo(Long id, String title, String content, Member member) {
+    public AiInfo(Long id, String title, String content, Member member,String image) {
         this.id = id;
         this.title = title;
         this.content = content;
         this.member = member;
+        this.image=image;
     }
 
     public void updateAiInfo(AiInfoReqDto aiInfoReqDto){
         this.title=aiInfoReqDto.getTitle();
         this.content=aiInfoReqDto.getContent();
+        this.image=aiInfoReqDto.getUrl();
     }
 
 
-    public void setImage(List<Image> images){
-        this.image=images;
-    }
     public void updateView(){
         this.viewCount=this.viewCount+1;
     }

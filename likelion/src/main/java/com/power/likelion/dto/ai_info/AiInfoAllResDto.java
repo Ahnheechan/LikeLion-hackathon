@@ -18,6 +18,7 @@ public class AiInfoAllResDto {
     private String createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private String image;
 
     @Builder
     public AiInfoAllResDto(AiInfo aiInfo) {
@@ -27,6 +28,7 @@ public class AiInfoAllResDto {
         this.createdBy = aiInfo.getMember().getNickname();
         this.createdAt = aiInfo.getCreatedAt();
         this.modifiedAt = aiInfo.getModifiedAt();
+        this.image=aiInfo.getImage();
 
     }
 }

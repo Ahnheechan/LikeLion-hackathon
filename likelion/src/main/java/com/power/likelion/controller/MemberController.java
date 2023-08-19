@@ -5,6 +5,8 @@ import com.power.likelion.common.response.SignStatus;
 import com.power.likelion.dto.login.GetInfoRes;
 import com.power.likelion.dto.login.LoginDto;
 import com.power.likelion.dto.login.LoginResDto;
+import com.power.likelion.dto.member.MemberActivityResDto;
+import com.power.likelion.dto.member.MemberComActResDto;
 import com.power.likelion.dto.member.MemberUpdateReq;
 import com.power.likelion.dto.sign_up.SignUpReqDto;
 import com.power.likelion.dto.sign_up.SingUpResDto;
@@ -104,10 +106,50 @@ public class MemberController {
     }
 
 
+    /** 활동 내역 조회 */
+    /** 회원 ID와 type을 받으면 해당 하는 회원의 활동 정보와 닉네임, 프로필 이미지를 제공한다.*/
+    /** Type에 맞게 질문, 답변, 게시글, 댓글을 페이징으로 제공하고 */
+    /** 닉네임과 프로필 이미지를 제공한다. */
+
+    /** Type은 총 4가지로 question, answer, board, comment 이다. 이외의 값이 type에 오면 오류를 발생시킨다. */
+    @GetMapping("/member/{id}/{type}")
+    public ResponseEntity<?> showActivity(
+            @PathVariable("id") Long id,
+            @PathVariable("type") String type,
+            @RequestParam("page")int page){
+
+        if(type.equals("comment")){
+            try{
+                MemberComActResDto memberComActResDto=memberService.getActivityComment(id,page);
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(memberComActResDto);
+            }
+            catch (Exception e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+            }
+        }
+
+        else {
+            try {
+                MemberActivityResDto memberActivityResDto = memberService.getActivity(id, type, page);
+
+
+                return ResponseEntity.status(HttpStatus.OK)
+                        .body(memberActivityResDto);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(new BaseResponse<>(HttpStatus.BAD_REQUEST.value(), e.getMessage()));
+            }
+
+        }
+    }
+
+
     /** 내 정보 수정  */
     @MemberUpdateApiReq
     @GetInfoApiResponse
-    @PostMapping("/update/info")
+    @PatchMapping("/update/info")
     public ResponseEntity<?> updateUser(@RequestBody MemberUpdateReq memberUpdateReq){
         try{
             return ResponseEntity.status(HttpStatus.OK)

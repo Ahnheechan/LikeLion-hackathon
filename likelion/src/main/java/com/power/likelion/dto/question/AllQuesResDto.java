@@ -21,6 +21,7 @@ public class AllQuesResDto {
     private int point;
     private int answerCnt;
     private LocalDateTime createdAt;
+    private Long memberId;
 
 
     public AllQuesResDto(Question question) {
@@ -33,5 +34,6 @@ public class AllQuesResDto {
         this.createdAt = question.getCreatedAt();
         this.checkStatus=question.getQuestionCheck().getDescription();
         this.answerCnt=question.getAnswers().size();
+        this.memberId=question.getMember().getId();
     }
 }

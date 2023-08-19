@@ -93,6 +93,11 @@ public class AnswerSerivce {
             throw new Exception("답변 작성자가 아닙니다.");
         }
 
+        if(answer.getAnswerCheck().equals(CheckStatus.True)){
+           throw new Exception("답변이 채택되어 삭제할 수 없습니다.");
+        }
+
+
 
         answerRepository.delete(answer);
     }

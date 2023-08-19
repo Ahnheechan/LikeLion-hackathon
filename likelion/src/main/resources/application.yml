@@ -7,14 +7,15 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     #로컬ㅇ
-    username: ahc700
-    password: ahc0209@
-    url: jdbc:mysql://localhost:3306/team_power
+#    username: ahc700
+#    password: ahc0209@
+#    url: jdbc:mysql://localhost:3306/team_power
+
 
   jpa:
     defer-datasource-initialization: true
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     show-sql: false
     properties:
       hibernate:
@@ -39,6 +40,7 @@ spring:
       max-file-size: 10MB #파일 하나 당 최대 size
       max-request-size: 20MB # 요청 당 최대 size
 
+
 # jwt.secret.key
 jwt:
   secret:
@@ -49,10 +51,10 @@ cloud:
     stack:
       auto: false
     s3:
-      endpoint:
-      bucket:
+      endpoint: 
+      bucket: 
     region:
       static: ap-northeast-2
     credentials:
-      access-key:
-      secret-key:
+      access-key: 
+      secret-key: 

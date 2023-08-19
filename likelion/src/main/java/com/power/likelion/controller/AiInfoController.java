@@ -72,6 +72,7 @@ public class AiInfoController {
         }
     }
 
+
     /** AI 단일 게시글 조회 */
     @GetMapping("/ai-info/{id}")
     public ResponseEntity<?> getAiInfo(@PathVariable("id") Long id){

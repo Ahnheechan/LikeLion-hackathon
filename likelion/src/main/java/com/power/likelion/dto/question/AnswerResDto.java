@@ -14,6 +14,7 @@ public class AnswerResDto {
     private String createdBy;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+    private Long memberId;
 
     @Builder
     public AnswerResDto(Answer answer) {
@@ -23,5 +24,6 @@ public class AnswerResDto {
         this.createdBy = answer.getMember().getNickname();
         this.createdAt = answer.getCreatedAt();
         this.modifiedAt = answer.getModifiedAt();
+        this.memberId=answer.getMember().getId();
     }
 }

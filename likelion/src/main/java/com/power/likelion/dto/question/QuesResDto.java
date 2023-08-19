@@ -1,6 +1,7 @@
 package com.power.likelion.dto.question;
 
 
+import com.power.likelion.domain.member.Member;
 import com.power.likelion.domain.question.Question;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class QuesResDto {
     private String createdBy;
     private List<AnswerResDto> answers;
     private int answerCnt;
+    private Long memberId;
+    private String image;
 
 
     @Builder
@@ -40,6 +43,8 @@ public class QuesResDto {
         this.modifiedAt = question.getModifiedAt();
         this.createdBy = question.getMember().getNickname();
         this.answerCnt=question.getAnswers().size();
+        this.memberId=question.getMember().getId();
+        this.image=question.getImage();
     }
 
     public void setAnswers(List<AnswerResDto> answer){

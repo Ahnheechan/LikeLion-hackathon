@@ -4,22 +4,22 @@ spring:
       client:
         registration:
           google:
-            client-id:
-            client-secret:
+            client-id: 
+            client-secret: 
             scope: profile, email
 
           naver:
-            client-id:
-            client-secret:
-            redirect-uri:
+            client-id: 
+            client-secret: 
+            redirect-uri: http://localhost:3000/login/oauth2/callback/naver
             authorization-grant-type: authorization_code
             scope: name, email
             client-name: Naver
 
           kakao:
             client-id:    # rest-api
-            client-secret:
-            redirect-uri:
+            client-secret: 
+            redirect-uri: http://localhost:3000/login/oauth2/callback/kakao
             client-authentication-method: POST
             authorization-grant-type: authorization_code
             scope: profile_nickname, profile_image

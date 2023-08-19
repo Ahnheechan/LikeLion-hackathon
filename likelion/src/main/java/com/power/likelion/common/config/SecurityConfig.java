@@ -53,13 +53,13 @@ public class SecurityConfig {
 
                 //API 명세서 관련된 모든 요소들도 모두 승인
                 .antMatchers("/", "/swagger-ui/**", "/v3/**","/swagger-ui.html").permitAll()
-                // 회원가입과 로그인은 모두 승인
-                .antMatchers("/login", "/sign-up","/admin/sign-up").permitAll()   // permitAll()을 하게되면 JWT 필터를 거치지 않고 간다.
+                // 회원가입과 로그인, 활동내역조회는 모두 승인
+                .antMatchers("/login", "/sign-up","/admin/sign-up","/member/**").permitAll()   // permitAll()을 하게되면 JWT 필터를 거치지 않고 간다.
+
                 //질문 하나를 보는건 비회원도 접근가능 but 질문 생성, 삭제, 답변작성 등은 회원만 가능
                 .antMatchers(HttpMethod.GET,"/questions","/questions/{id}").permitAll()
                 .antMatchers(HttpMethod.GET,"/boards","/boards/{id}").permitAll()
 
-                .antMatchers("/questions/create").hasRole("USER")
                 // /admin으로 시작하는 요청은 ADMIN 권한이 있는 유저에게만 허용
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 // /user 로 시작하는 요청은 USER 권한이 있는 유저에게만 허용
@@ -75,7 +75,7 @@ public class SecurityConfig {
                 .antMatchers("/upload/**").permitAll()
 
                 // 카카오 페이
-                .antMatchers("/payment/**").permitAll()
+                .antMatchers("/payment/**","/payment-success").permitAll()
 
                 .anyRequest().authenticated(); // 위에서 설정한 API를 제외하고는 모두 JWT 필터를 거친다는 소리 TODO 나중에 바꿔야 함
 

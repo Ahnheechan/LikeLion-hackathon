@@ -10,16 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LoginResDto {
     private SignStatus status;
+    private Long id;
     private String message;
     private String nickname;
     private String email;
     private int age;
     private String jwtToken;
     private int point;
+    private String url;
 
 
     @Builder
-    public LoginResDto(SignStatus status, String message, String nickname, String email,int age, String jwtToken,int point) {
+    public LoginResDto(SignStatus status, String message, String nickname, String email,int age, String jwtToken,int point,String url,Long id) {
         this.status = status;
         this.message = message;
         this.nickname = nickname;
@@ -27,5 +29,7 @@ public class LoginResDto {
         this.age=age;
         this.jwtToken = jwtToken;
         this.point=point;
+        this.url=url;
+        this.id=id;
     }
 }

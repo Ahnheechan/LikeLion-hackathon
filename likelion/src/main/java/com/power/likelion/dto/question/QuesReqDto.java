@@ -17,10 +17,14 @@ public class QuesReqDto {
     @Schema(description = "내공", example = "100")
     private int point;
 
+    @Schema(description = "이미지", example = "https://ncp-bucket-user.kr.object.ncloudstorage.com/aiinfo/921193333073900.jpg")
+    private String image;
 
-    public QuesReqDto(String title, String content, int point) {
+
+    public QuesReqDto(String title, String content, int point, String image) {
         this.title = title;
         this.content = content;
         this.point = point;
+        this.image=image;
     }
 }

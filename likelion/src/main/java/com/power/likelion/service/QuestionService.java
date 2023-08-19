@@ -12,10 +12,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.expression.ExpressionException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.swing.text.BadLocationException;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -53,11 +56,12 @@ public class QuestionService {
                 .content(quesReqDto.getContent())
                 .questionCheck(CheckStatus.False)
                 .member(member)
+                .image(quesReqDto.getImage())
                 .build();
 
 
         Question resQuestion =questionRepository.save(question);
-
+        log.info("{}:",resQuestion);
 
         return QuesResDto.builder()
                 .question(resQuestion)
@@ -67,8 +71,18 @@ public class QuestionService {
 
     /** 페이징 처리로 size개의 게시글이 간다. */
     @Transactional
-    public QuesPageResDto getQuestions(int page,int size){
-        Page<Question> questions = questionRepository.findAll(PageRequest.of(page, size));
+    public QuesPageResDto getQuestions(int page,int size,String checkStatus){
+        Page<Question> questions;
+
+        /** 채택과 채택전으로 나눔 */
+        if(checkStatus.equals("채택")){
+            questions = questionRepository.findAllByQuestionCheck(CheckStatus.True, PageRequest.of(page, size));
+        }
+        else{
+            questions=questionRepository.findAllByQuestionCheck(CheckStatus.False,PageRequest.of(page, size));
+        }
+
+
         PageInfo pageInfo= PageInfo.builder()
                 .page(page)
                 .pageSize(size)
@@ -88,28 +102,48 @@ public class QuestionService {
     }
 
 
-
+    /** 페이징 검색 */
     @Transactional
-    public QuesPageResDto searchQuestions(int page,int size ,String searchKeyword, String option) throws NullPointerException, NoSuchElementException{
+    public QuesPageResDto searchQuestions(int page,int size ,String searchKeyword, String option,String checkStatus) throws NullPointerException, NoSuchElementException{
         Page<Question> questions=null;
 
+        /** 채택과 채택전으로 나누기 */
+        if(checkStatus.equals("채택")){
+            if(option.equals("제목")){
+                questions=questionRepository.findByQuestionCheckAndTitleContaining(CheckStatus.True,searchKeyword,PageRequest.of(page, size));
+            }
+            else if(option.equals("내용")){
+                questions=questionRepository.findByQuestionCheckAndContentContaining(CheckStatus.True,searchKeyword,PageRequest.of(page,size));
+            }
+            else if(option.equals("제목 내용")){
+                questions=questionRepository.findByQuestionCheckAndTitleContainingOrContentContaining(CheckStatus.True,searchKeyword,searchKeyword,PageRequest.of(page,size));
+            }
+            else{
+                throw new NullPointerException("해당 검색 옵션은 존재하지 안습니다.");
+            }
 
-        if(option.equals("제목")){
-            questions=questionRepository.findByTitleContaining(searchKeyword,PageRequest.of(page, size));
+
         }
-        else if(option.equals("내용")){
-            questions=questionRepository.findByContentContaining(searchKeyword,PageRequest.of(page,size));
-        }
-        else if(option.equals("제목 내용")){
-            questions=questionRepository.findByTitleContainingOrContentContaining(searchKeyword,searchKeyword,PageRequest.of(page,size));
-        }
+        /** 채택 전 */
         else{
-            throw new NullPointerException("해당 검색 옵션은 존재하지 안습니다.");
+            if(option.equals("제목")){
+                questions=questionRepository.findByQuestionCheckAndTitleContaining(CheckStatus.False,searchKeyword,PageRequest.of(page, size));
+            }
+            else if(option.equals("내용")){
+                questions=questionRepository.findByQuestionCheckAndContentContaining(CheckStatus.False,searchKeyword,PageRequest.of(page,size));
+            }
+            else if(option.equals("제목 내용")){
+                questions=questionRepository.findByQuestionCheckAndTitleContainingOrContentContaining(CheckStatus.False,searchKeyword,searchKeyword,PageRequest.of(page,size));
+            }
+            else{
+                throw new NullPointerException("해당 검색 옵션은 존재하지 안습니다.");
+            }
+
+            if(questions==null){
+                throw new NoSuchElementException("해당 검색어에 해당하는 질문이 존재하지 않습니다.");
+            }
         }
 
-        if(questions==null){
-            throw new NoSuchElementException("해당 검색어에 해당하는 질문이 존재하지 않습니다.");
-        }
 
         List<AllQuesResDto> results=questions.getContent().stream()
                 .map(o -> new AllQuesResDto(o)).collect(Collectors.toList());
@@ -134,6 +168,7 @@ public class QuestionService {
     public QuesResDto getQuestion(Long id)throws Exception {
 
         Question question=questionRepository.findById(id).orElseThrow(() -> new Exception("질문이 존재하지 않습니다."));
+
 
         question.updateView();
 
@@ -162,7 +197,7 @@ public class QuestionService {
         if(!writer.equals(name)){
             throw new AuthorMismatchException("동일한 작성자가 아닙니다.");
         }
-
+        /** 버킷 삭제 구현 안함 */
         question.update(quesUpdateDto);
 
         return QuesResDto.builder().question(question).build();
@@ -170,8 +205,24 @@ public class QuestionService {
 
     @Transactional
     public void deleteQuestion(Long id)throws Exception{
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String name = authentication.getName();
+
         Question question=questionRepository.findById(id)
                 .orElseThrow(()->new Exception("질문이 존재하지 않습니다."));
+        if(!name.equals(question.getMember().getEmail())){
+            throw new Exception("질문 작성자가 아닙니다.");
+        }
+
+        if(question.getQuestionCheck().equals(CheckStatus.True)){
+            throw new Exception("채택된 질문은 삭제할 수 없습니다.");
+        }
+
+        Member member=memberRepository.findByEmail(name)
+                .orElseThrow(()->new Exception("해당 유저가 존재하지 않습니다."));
+
+        member.plusPoint(question.getPoint());
+
         questionRepository.delete(question);
     }
 

@@ -56,12 +56,13 @@ public class QuestionController {
     public ResponseEntity<?> searchQuestion(@RequestParam(name = "page") @Min(0) Integer page,
                                             @RequestParam(name= "size") @Min(0) Integer size,
                                             @RequestParam(required = false,name = "option") String option,
-                                            @RequestParam(required = false,name = "searchKeyword") String searchKeyword)
+                                            @RequestParam(required = false,name = "searchKeyword") String searchKeyword,
+                                            @RequestParam(required = true, name= "checkStatus")String checkStatus)
     {
         if(searchKeyword==null){
             return ResponseEntity.status(HttpStatus.OK)
                     .body(BaseResponse.builder()
-                            .result(questionService.getQuestions(page,size))
+                            .result(questionService.getQuestions(page,size,checkStatus))
                             .build()
                     );
         }
@@ -69,7 +70,7 @@ public class QuestionController {
         try{
             return ResponseEntity.status(HttpStatus.OK)
                     .body(BaseResponse.builder()
-                            .result(questionService.searchQuestions(page,size,searchKeyword,option))
+                            .result(questionService.searchQuestions(page,size,searchKeyword,option,checkStatus))
                             .build());
         }
 

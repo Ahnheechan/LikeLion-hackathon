@@ -22,6 +22,7 @@ public class BoardResDto {
     private LocalDateTime modifiedAt;
     private List<CommentResDto> comments;
     private int commentCnt;
+    private Long memberId;
 
     @Builder
     public BoardResDto(Board board) {
@@ -34,6 +35,7 @@ public class BoardResDto {
         this.createdAt = board.getCreatedAt();
         this.modifiedAt = board.getModifiedAt();
         this.commentCnt=board.getComments().size();
+        this.memberId=board.getMember().getId();
     }
 
 

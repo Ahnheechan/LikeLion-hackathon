@@ -10,6 +10,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
+@ToString
 @Entity
 @Table(name="member")
 @Builder
@@ -45,13 +46,15 @@ public class Member extends AuditingFiled {
     @Column(nullable = true)
     private String tid;
 
+    @Column( nullable = false,columnDefinition = "integer default 0")
+    private int viewCount;
+
     @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @Builder.Default
     private List<Authority> roles = new ArrayList<>();
 
 
     public void updateMember(MemberUpdateReq memberUpdateReq){
-        this.age=memberUpdateReq.getAge();
         this.nickname=memberUpdateReq.getNickname();
     }
     public void setUrl(String url){
@@ -70,6 +73,10 @@ public class Member extends AuditingFiled {
 
     public void updateTid(String tid){
         this.tid=tid;
+    }
+
+    public void updateView(){
+        this.viewCount=this.viewCount+1;
     }
 
 

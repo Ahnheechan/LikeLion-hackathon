@@ -34,6 +34,9 @@ public class Question extends AuditingFiled {
     @Column( nullable = false,columnDefinition = "integer default 0")
     private int viewCount;
 
+    @Column(nullable = true)
+    private String image;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="memberId")
@@ -48,19 +51,21 @@ public class Question extends AuditingFiled {
     private List<Answer> answers=new ArrayList<Answer>();
 
     @Builder
-    public Question(String title, String content, int point, int viewCount, Member member, CheckStatus questionCheck) {
+    public Question(String title, String content, int point, int viewCount, Member member, CheckStatus questionCheck,String image) {
         this.title = title;
         this.content = content;
         this.point = point;
         this.viewCount = viewCount;
         this.member = member;
         this.questionCheck = questionCheck;
+        this.image=image;
     }
 
     public void update(QuesUpdateDto quesUpdateDto){
         this.title=quesUpdateDto.getTitle();
         this.content=quesUpdateDto.getContent();
         this.point=quesUpdateDto.getPoint();
+        this.image=quesUpdateDto.getImage();
     }
 
     public void updateView(){

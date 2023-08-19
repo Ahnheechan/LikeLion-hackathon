@@ -8,9 +8,14 @@ import com.power.likelion.utils.swagger.pay.PayApiReq;
 import com.power.likelion.utils.swagger.pay.PayApiRes;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.apache.http.protocol.ResponseServer;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,7 +29,7 @@ public class KakaoPayController {
     /** 결제 준비 redirect url 받기 --> 상품명과 가격을 같이 보내줘야함 */
     @PayApiReq
     @PayApiRes
-    @GetMapping("/ready")
+    @PostMapping("/ready")
     public ResponseEntity<?> getRedirectUrl(@RequestBody PayInfoDto payInfoDto) {
         try {
             return ResponseEntity.status(HttpStatus.OK)
@@ -36,22 +41,27 @@ public class KakaoPayController {
 
         }
     }
-    /**
-     * 결제 성공 pid 를  받기 위해 request를 받고 pgToken은 rediret url에 뒤에 붙어오는걸 떼서 쓰기 위함
-     */
+
     @GetMapping("/success/{id}")
-    public ResponseEntity<?> afterGetRedirectUrl(@PathVariable("id")Long id,
-                                                 @RequestParam("pg_token") String pgToken) {
+    public void afterGetRedirectUrl(HttpServletResponse response, @PathVariable("id")Long id,
+                                              @RequestParam("pg_token") String pgToken) {
         try {
             PayApproveResDto kakaoApprove = kakaoPayService.getApprove(pgToken,id);
 
-            return ResponseEntity.status(HttpStatus.OK)
-                    .body(kakaoApprove);
+
+            response.sendRedirect("http://techmate.site/myPage/:"+id);
+//            return ResponseEntity.status(HttpStatus.OK)
+//                    .body(BaseResponse
+//                            .builder()
+//                            .result(kakaoApprove)
+//                            .build());
+
         }
         catch(Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(),e.getMessage()));
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+//                    .body(new BaseResponse<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage()));
         }
+
     }
 
 
